@@ -3,8 +3,6 @@ on:
   release:
     types: [created]
   push:
-    paths:
-      - '.github/workflows/release.yml'
 
 jobs:
   clients:
