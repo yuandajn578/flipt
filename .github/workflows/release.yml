@@ -29,8 +29,6 @@ jobs:
           ruby-version: '2.6'
 
       - uses: actions/checkout@v2
-        env:
-          OUTPUT_DIR: tmp
         with:
           repository: markphelps/flipt-grpc-ruby
           path: tmp
@@ -38,4 +36,6 @@ jobs:
       - name: Generate clients
         env:
           OUTPUT_DIR: tmp
-        run: make clients
+        run: |
+          ls -la
+          make clients
