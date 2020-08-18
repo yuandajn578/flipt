@@ -37,5 +37,5 @@ jobs:
         env:
           OUTPUT_DIR: tmp
         run: |
-          ls -la
+          ls -la tmp
           make clients
