@@ -1,5 +1,16 @@
 #!/bin/sh
 
+set -e
+
+if [ "$(uname)" = "Darwin" ]; then
+  if ! brew bundle check --no-upgrade >/dev/null; then
+    if ! brew bundle --no-upgrade; then
+        echo "Failed to install homebrew dependencies"
+        exit 1
+    fi
+  fi
+fi
+
 TOOLS=$(pwd)/_tools
 export GOBIN=$TOOLS/bin
 

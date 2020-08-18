@@ -4,12 +4,11 @@ The following are instructions for setting up your machine for Flipt development
 
 ## Requirements
 
-Before starting, make sure you have the following installed:
-
 * GCC Compiler
 * [SQLite](https://sqlite.org/index.html)
 * [Go 1.14+](https://golang.org/doc/install)
 * [Protoc Compiler](https://github.com/protocolbuffers/protobuf)
+* [Yarn](https://yarnpkg.com/)
 
 ## Setup
 

@@ -31,8 +31,9 @@ case "$1" in
             ;;
 
 "clients")
-            GO_OUTPUT_DIR=$(realpath "../flipt-grpc-go")
-            RUBY_OUTPUT_DIR=$(realpath "../flipt-grpc-ruby/lib")
+            OUTPUT_DIR =? ".."
+            GO_OUTPUT_DIR=$(realpath "${OUTPUT_DIR}/flipt-grpc-go")
+            RUBY_OUTPUT_DIR=$(realpath "${OUTPUT_DIR}/flipt-grpc-ruby/lib")
 
             if [[ -f "grpc_tools_ruby_protoc" ]]; then
                 echo "--> installing ruby dependencies..."

@@ -1,0 +1,41 @@
+name: Release
+on:
+  release:
+    types: [created]
+  push:
+    paths:
+      - '.github/workflows/release.yml'
+
+jobs:
+  clients:
+    name: 'Generate GRPC clients'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.14.x'
+
+      - uses: actions/cache@v1
+        id: go-cache
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-${{ hashFiles('**/go.sum') }}
+
+      - name: Install dependencies
+        run: make bootstrap
+
+      - uses: actions/setup-ruby@v1
+        with:
+          ruby-version: '2.6'
+
+      - uses: actions/checkout@v2
+        env:
+          OUTPUT_DIR: tmp
+        with:
+          repository: markphelps/flipt-grpc-ruby
+          path: $(OUTPUT_DIR)
+
+      - name: Generate clients
+        run: make clients
