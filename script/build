@@ -3,7 +3,7 @@
 set -euo pipefail
 
 GORELEASER_VERSION=v0.138.0
-OUTPUT_DIR ?= ".."
+OUTPUT_DIR=${OUTPUT_DIR:-".."}
 
 cd "$(dirname "$0")/.." || exit
 
