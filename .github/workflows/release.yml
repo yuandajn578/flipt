@@ -35,7 +35,7 @@ jobs:
           OUTPUT_DIR: tmp
         with:
           repository: markphelps/flipt-grpc-ruby
-          path: $(OUTPUT_DIR)
+          path: tmp
 
       - name: Generate clients
         run: make clients
