@@ -36,15 +36,13 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: markphelps/flipt-grpc-ruby
-          path: tmp/flipt-grpc-ruby
+          path: ../flipt-grpc-ruby
 
       - uses: actions/checkout@v2
         with:
           repository: markphelps/flipt-grpc-go
-          path: tmp/flipt-grpc-go
+          path: ../flipt-grpc-go
 
       - name: Generate clients
-        env:
-          OUTPUT_DIR: tmp
         run: |
           make clients
