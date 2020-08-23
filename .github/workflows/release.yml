@@ -8,13 +8,16 @@ jobs:
   clients:
     name: 'Generate GRPC clients'
     runs-on: ubuntu-latest
+    env:
+      PATH: "$PATH:$HOME/.local/bin"
+
     steps:
       - name: Install protoc
         env:
           PROTOC_VERSION: 3.13.0
         run: |
-          curl -LO "https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-x86_64.zip"
-          sudo unzip "protoc-${PROTOC_VERSION}-linux-x86_64.zip" -d /usr/local
+          curl -LO "https://github.com/protocolbuffers/protobuf/releases/download/v$(PROTOC_VERSION)/protoc-$(PROTOC_VERSION)-linux-x86_64.zip"
+          unzip "protoc-$(PROTOC_VERSION)-linux-x86_64.zip" -d $HOME/.local
           protoc --version
 
       - uses: actions/checkout@v2
