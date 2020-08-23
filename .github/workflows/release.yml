@@ -16,6 +16,8 @@ jobs:
         run: |
           curl -LO "https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-x86_64.zip"
           unzip "protoc-${PROTOC_VERSION}-linux-x86_64.zip" -d $HOME/.local
+          export PATH=$PATH:$HOME/.local/bin
+          protoc --version
 
       - uses: actions/checkout@v2
 
@@ -49,6 +51,5 @@ jobs:
       - name: Generate clients
         env:
           OUTPUT_DIR: tmp
-          PATH: "$PATH:$HOME/.local/bin"
         run: |
           make clients
