@@ -10,14 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install protoc
-        env:
-          PROTOC_VERSION: 3.13.0
-        run: |
-          curl -LO "https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-x86_64.zip"
-          unzip "protoc-${PROTOC_VERSION}-linux-x86_64.zip" -d $HOME/.local
-          export PATH=$PATH:$HOME/.local/bin
-          protoc --version
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v1
+        with:
+          version: '3.x'
 
       - uses: actions/checkout@v2
 
@@ -52,5 +48,4 @@ jobs:
         env:
           OUTPUT_DIR: tmp
         run: |
-          export PATH=$PATH:$HOME/.local/bin
           make clients

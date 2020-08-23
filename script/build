@@ -35,7 +35,7 @@ case "$1" in
             GO_OUTPUT_DIR=$(realpath "${OUTPUT_DIR}/flipt-grpc-go")
             RUBY_OUTPUT_DIR=$(realpath "${OUTPUT_DIR}/flipt-grpc-ruby/lib")
 
-            if [[ -f "grpc_tools_ruby_protoc" ]]; then
+            if ! command -v "grpc_tools_ruby_protoc" &> /dev/null; then
                 echo "--> installing ruby dependencies..."
                 gem install grpc-tools
             fi
