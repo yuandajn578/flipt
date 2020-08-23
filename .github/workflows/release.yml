@@ -3,8 +3,6 @@ on:
   release:
     types: [created]
   push:
-    paths:
-      - '.github/workflows/release.yml'
 
 jobs:
   clients:
@@ -36,11 +34,17 @@ jobs:
           ruby-version: '2.6'
 
       - uses: actions/checkout@v2
-        env:
-          OUTPUT_DIR: tmp
         with:
           repository: markphelps/flipt-grpc-ruby
-          path: tmp
+          path: tmp/flipt-grpc-ruby
+
+      - uses: actions/checkout@v2
+        with:
+          repository: markphelps/flipt-grpc-go
+          path: tmp/flipt-grpc-go
 
       - name: Generate clients
-        run: make clients
+        env:
+          OUTPUT_DIR: tmp
+        run: |
+          make clients
