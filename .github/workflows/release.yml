@@ -52,4 +52,5 @@ jobs:
         env:
           OUTPUT_DIR: tmp
         run: |
+          export PATH=$PATH:$HOME/.local/bin
           make clients
