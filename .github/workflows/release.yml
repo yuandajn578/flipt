@@ -49,3 +49,14 @@ jobs:
           OUTPUT_DIR: tmp
         run: |
           make clients
+
+      - name: Check changes
+        run: |
+          pushd tmp/flipt-grpc-ruby
+          git diff-index --quiet HEAD
+          echo $?
+          popd
+          pushd tmp/flipt-grpc-go
+          git diff-index --quiet HEAD
+          echo $?
+          popd
