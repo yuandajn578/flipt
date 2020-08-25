@@ -53,8 +53,8 @@ jobs:
       - name: Check changes
         run: |
           pushd tmp/flipt-grpc-ruby
-          git diff-index HEAD
+          git diff HEAD
           popd
           pushd tmp/flipt-grpc-go
-          git diff-index HEAD
+          git diff HEAD
           popd
