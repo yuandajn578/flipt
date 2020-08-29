@@ -102,8 +102,7 @@ release: clean assets pack ## Build and publish a release
 
 .PHONY: clients
 clients: ## Generate GRPC clients
-	@echo ">> generating GRPC clients"
-	@./script/build clients
+	@echo ">> use './script/generate'!"
 
 .PHONY: help
 help:

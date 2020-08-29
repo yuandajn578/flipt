@@ -1,60 +1,7 @@
-name: Release
-on:
-  release:
-    types: [created]
-  push:
+# name: Release
+# on:
+#   release:
+#     types: [created]
+#   push:
 
-jobs:
-  clients:
-    name: 'Generate GRPC clients'
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Install Protoc
-        uses: arduino/setup-protoc@v1
-        with:
-          version: '3.x'
-
-      - uses: actions/checkout@v2
-
-      - uses: actions/setup-go@v2
-        with:
-          go-version: '1.14.x'
-
-      - uses: actions/cache@v1
-        id: go-cache
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-${{ hashFiles('**/go.sum') }}
-
-      - name: Install dependencies
-        run: make bootstrap
-
-      - uses: actions/setup-ruby@v1
-        with:
-          ruby-version: '2.6'
-
-      - uses: actions/checkout@v2
-        with:
-          repository: markphelps/flipt-grpc-ruby
-          path: tmp/flipt-grpc-ruby
-
-      - uses: actions/checkout@v2
-        with:
-          repository: markphelps/flipt-grpc-go
-          path: tmp/flipt-grpc-go
-
-      - name: Generate clients
-        env:
-          OUTPUT_DIR: tmp
-        run: |
-          make clients
-
-      - name: Check changes
-        run: |
-          pushd tmp/flipt-grpc-ruby
-          git diff HEAD
-          popd
-          pushd tmp/flipt-grpc-go
-          git diff HEAD
-          popd
+# jobs:

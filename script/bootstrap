@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -e
+set -eo pipefail
 
 if [ "$(uname)" = "Darwin" ]; then
   if ! brew bundle check --no-upgrade >/dev/null; then
