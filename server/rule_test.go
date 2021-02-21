@@ -67,6 +67,11 @@ func TestCreateRule(t *testing.T) {
 		}
 	)
 
+	store.On("GetFlag", mock.Anything, mock.Anything).Return(&flipt.Flag{
+		Key:      "flagKey",
+		Variants: []*flipt.Variant{{Id: "1"}},
+	}, nil)
+
 	store.On("CreateRule", mock.Anything, req).Return(&flipt.Rule{
 		Id:         "1",
 		FlagKey:    req.FlagKey,
@@ -78,6 +83,28 @@ func TestCreateRule(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.NotNil(t, got)
+}
+
+func TestCreateRule_NoVariants(t *testing.T) {
+	var (
+		store = &storeMock{}
+		s     = &Server{
+			logger: logger,
+			store:  store,
+		}
+		req = &flipt.CreateRuleRequest{
+			FlagKey:    "flagKey",
+			SegmentKey: "segmentKey",
+			Rank:       1,
+		}
+	)
+
+	store.On("GetFlag", mock.Anything, mock.Anything).Return(&flipt.Flag{
+		Key: "flagKey",
+	}, nil)
+
+	_, err := s.CreateRule(context.TODO(), req)
+	assert.EqualError(t, err, "flag \"flagKey\" has no variants")
 }
 
 func TestUpdateRule(t *testing.T) {

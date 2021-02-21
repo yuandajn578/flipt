@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/markphelps/flipt/errors"
 	flipt "github.com/markphelps/flipt/rpc"
 	"github.com/markphelps/flipt/storage"
 )
@@ -37,6 +38,16 @@ func (s *Server) ListRules(ctx context.Context, r *flipt.ListRuleRequest) (*flip
 // CreateRule creates a rule
 func (s *Server) CreateRule(ctx context.Context, r *flipt.CreateRuleRequest) (*flipt.Rule, error) {
 	s.logger.WithField("request", r).Debug("create rule")
+
+	flag, err := s.store.GetFlag(ctx, r.FlagKey)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(flag.Variants) < 1 {
+		return nil, errors.ErrInvalidf("flag %q has no variants", flag.Key)
+	}
+
 	rule, err := s.store.CreateRule(ctx, r)
 	s.logger.WithField("response", rule).Debug("create rule")
 	return rule, err
