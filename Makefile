@@ -24,7 +24,6 @@ $(UI_OUTPUT_PATH): $(UI_NODE_MODULES_PATH) $(UI_SOURCE_FILES)
 .PHONY: bootstrap
 bootstrap: ## Install dev tools
 	@echo ">> installing dev tools"
-	go get -u -v "github.com/golang/protobuf/protoc-gen-go@v1.4.2"
 	@./script/bootstrap
 
 .PHONY: bench

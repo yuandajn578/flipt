@@ -36,9 +36,10 @@ require (
 	github.com/timakin/bodyclose v0.0.0-20200424151742-cb6215831a94 // indirect
 	golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de // indirect
 	golang.org/x/tools v0.0.0-20201013201025-64a9e34f3752
+	google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013 // indirect
 	google.golang.org/grpc v1.31.0
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v0.0.0-20200814200710-a3740e5ed326 // indirect
-	google.golang.org/protobuf v1.25.0 // indirect
+	google.golang.org/protobuf v1.26.0-rc.1 // indirect
 	gopkg.in/ini.v1 v1.58.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 	mvdan.cc/gofumpt v0.0.0-20200802201014-ab5a8192947d // indirect
