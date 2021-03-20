@@ -3,7 +3,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 
@@ -11,11 +10,18 @@ import (
 	"github.com/magefile/mage/sh"
 )
 
-const GOBIN = "_tools/bin/"
+const (
+	srcPath  = "./..."
+	toolPath = "_tools/"
+	binPath  = toolPath + "bin/"
+)
 
-var env = map[string]string{
-	"GOBIN": GOBIN,
-}
+var (
+	pwd, _ = os.Getwd()
+	env    = map[string]string{
+		"GOBIN": pwd + "/" + binPath,
+	}
+)
 
 // Buld runs go mod download and then builds a local copy.
 func Build() error {
@@ -25,11 +31,35 @@ func Build() error {
 	return sh.RunV("go", "build", "-o", "./bin/flipt", "./cmd/flipt")
 }
 
+func Clean() error {
+	if err := sh.RunV("go", "clean", "-i", srcPath); err != nil {
+		return err
+	}
+
+	if err := sh.RunV("packr", "clean"); err != nil {
+		return err
+	}
+
+	if err := os.RemoveAll("dist"); err != nil {
+		return err
+	}
+
+	return sh.RunV("go", "mod", "tidy")
+}
+
+func Fmt() error {
+	if err := sh.RunV("gofmt", "-w", "-s", "."); err != nil {
+		return err
+	}
+
+	return sh.RunV("goimports", "-w", ".")
+}
+
 // Test runs all the tests.
 func Test() error {
 	sourceFiles := os.Getenv("SOURCE_FILES")
 	if sourceFiles == "" {
-		sourceFiles = "./..."
+		sourceFiles = srcPath
 	}
 
 	testPattern := os.Getenv("TEST_PATTERN")
@@ -48,63 +78,54 @@ func Cover() error {
 
 //  Pack the assets in the binary.
 func Pack() error {
-	ok, err := isCmdAvailable(GOBIN + "packr")
-	if err != nil {
-		return err
-	}
-
-	if !ok {
-		return fmt.Errorf("could not find %q in path, may need to run bootstrap", "packr")
-	}
-
-	return sh.RunV(GOBIN+"packr", "-i", "cmd/flipt")
+	return sh.RunWithV(env, "packr", "-i", "cmd/flipt")
 }
 
 // Lint runs all the linters.
 func Lint() error {
-	ok, err := isCmdAvailable(GOBIN + "golangci-lint")
-	if err != nil {
-		return err
-	}
-
-	if !ok {
-		return fmt.Errorf("could not find %q in path, may need to run bootstrap", "golangci-lint")
-	}
-
-	return sh.RunV(GOBIN+"golangci-lint", "run")
+	return sh.RunWithV(env, "golangci-lint", "run")
 }
 
-const tools = `
-    "github.com/gobuffalo/packr/packr"
-    "google.golang.org/grpc/cmd/protoc-gen-go-grpc"
-    "github.com/golangci/golangci-lint/cmd/golangci-lint"
-    "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway"
-    "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger"
-    "golang.org/x/tools/cmd/cover"
-    "golang.org/x/tools/cmd/goimports"
-    "google.golang.org/grpc"
-    "github.com/buchanae/github-release-notes"`
+var tools = []string{
+	"github.com/golang/protobuf/protoc-gen-go@v1.4.2",
+	"github.com/gobuffalo/packr/packr",
+	"google.golang.org/grpc/cmd/protoc-gen-go-grpc",
+	"github.com/golangci/golangci-lint/cmd/golangci-lint",
+	"github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway",
+	"github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger",
+	"golang.org/x/tools/cmd/cover",
+	"golang.org/x/tools/cmd/goimports",
+	"google.golang.org/grpc",
+	"github.com/buchanae/github-release-notes",
+}
 
 // Bootstrap all tools required to build.
 func Bootstrap() error {
-	if err := os.MkdirAll(GOBIN, os.FileMode(os.O_RDWR)); err != nil {
+	if err := os.MkdirAll(binPath, os.ModePerm); err != nil {
 		return err
 	}
 
-	if err := os.Chdir(GOBIN); err != nil {
+	if err := os.Chdir(toolPath); err != nil {
 		return err
 	}
 
 	_, err := os.Stat("go.mod")
-	if os.IsNotExist(err) {
-		if err := sh.RunV("go", "mod", "init", "tools"); err != nil {
+	if err != nil {
+		if os.IsNotExist(err) {
+			if err := sh.RunV("go", "mod", "init", "tools"); err != nil {
+				return err
+			}
+		} else {
 			return err
 		}
-	} else {
-		return err
 	}
 
-	return sh.RunWithV(env, "go", "get", "-u", "-v", "github.com/golang/protobuf/protoc-gen-go@v1.4.2")
+	for _, pkg := range tools {
+		if err := sh.RunWithV(env, "go", "get", "-u", "-v", pkg); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func isCmdAvailable(cmd string) (bool, error) {
