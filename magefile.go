@@ -23,7 +23,7 @@ var (
 	}
 )
 
-// Buld runs go mod download and then builds a local copy.
+// Build runs go mod download and then builds a local copy.
 func Build() error {
 	if err := sh.RunV("go", "mod", "download"); err != nil {
 		return err
@@ -31,6 +31,7 @@ func Build() error {
 	return sh.RunV("go", "build", "-o", "./bin/flipt", "./cmd/flipt")
 }
 
+// Clean cleans up.
 func Clean() error {
 	if err := sh.RunV("go", "clean", "-i", srcPath); err != nil {
 		return err
@@ -47,6 +48,7 @@ func Clean() error {
 	return sh.RunV("go", "mod", "tidy")
 }
 
+// Fmt formats all go files.
 func Fmt() error {
 	if err := sh.RunV("gofmt", "-w", "-s", "."); err != nil {
 		return err
@@ -76,7 +78,7 @@ func Cover() error {
 	return sh.RunV("go", "tool", "cover", "-html=coverage.txt")
 }
 
-//  Pack the assets in the binary.
+//  Pack packs the assets in the binary.
 func Pack() error {
 	return sh.RunWithV(env, "packr", "-i", "cmd/flipt")
 }
@@ -99,7 +101,7 @@ var tools = []string{
 	"github.com/buchanae/github-release-notes",
 }
 
-// Bootstrap all tools required to build.
+// Bootstrap installs all tools required to build.
 func Bootstrap() error {
 	if err := os.MkdirAll(binPath, os.ModePerm); err != nil {
 		return err
