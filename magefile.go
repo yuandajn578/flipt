@@ -27,6 +27,7 @@ var (
 	pwd, _ = os.Getwd()
 	env    = map[string]string{
 		"GOBIN": pwd + "/" + binPath,
+		"PATH":  "$PATH:" + pwd + "/" + binPath,
 	}
 
 	tools = []string{
@@ -91,9 +92,12 @@ func Bootstrap() error {
 
 // Build runs go mod download and then builds a local copy.
 func Build() error {
+	mg.Deps(UI, Pack)
+
 	if err := sh.RunV("go", "mod", "download"); err != nil {
 		return err
 	}
+
 	return sh.RunV("go", "build", "-o", "./bin/flipt", "./cmd/flipt")
 }
 
@@ -146,6 +150,18 @@ func Pack() error {
 	return sh.RunWithV(env, "packr", "-i", "cmd/flipt")
 }
 
+// Proto generates protobufs.
+func Proto() error {
+	fmt.Println("--> generating protos..")
+	return sh.RunWithV(env, "protoc",
+		"-Irpc",
+		"--go_out=./rpc",
+		"--go-grpc_out=./rpc",
+		"--grpc-gateway_out=logtostderr=true,grpc_api_configuration=./rpc/flipt.yaml:./rpc",
+		"--swagger_out=logtostderr=true,grpc_api_configuration=./rpc/flipt.yaml:./swagger",
+		"flipt.proto")
+}
+
 // Test runs all the tests.
 func Test() error {
 	fmt.Println("--> running tests..")
@@ -186,6 +202,8 @@ func uiDeps() error {
 }
 
 func UI() error {
+	mg.Deps(Clean)
+
 	if err := uiDeps(); err != nil {
 		return err
 	}
